@@ -55,7 +55,7 @@ struct rimestats {
   unsigned long lltx, llrx;
 };
 
-#ifndef RIMESTATS_CONF_ENABLED
+#if RIMESTATS_CONF_ENABLED
 extern struct rimestats rimestats;
 #define RIMESTATS_ADD(x) rimestats.x++
 #else /* RIMESTATS_CONF_ENABLED */
