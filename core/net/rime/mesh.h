@@ -84,6 +84,7 @@ struct mesh_conn {
   struct route_discovery_conn route_discovery_conn;
   struct queuebuf *queued_data;
   rimeaddr_t queued_data_dest;
+  clock_time_t packet_timeout;
   const struct mesh_callbacks *cb;
 };
 
@@ -92,6 +93,7 @@ struct mesh_conn {
  * \param c    A pointer to a struct mesh_conn
  * \param channels The channels on which the connection will operate; mesh uses 3 channels
  * \param callbacks Pointer to callback structure
+ * \param packet_timeout How long to try to detect the route
  *
  *             This function sets up a mesh connection on the
  *             specified channel. The caller must have allocated the
@@ -104,7 +106,8 @@ struct mesh_conn {
  *
  */
 void mesh_open(struct mesh_conn *c, uint16_t channels,
-	       const struct mesh_callbacks *callbacks);
+	       const struct mesh_callbacks *callbacks,
+           clock_time_t packet_timeout);
 
 /**
  * \brief      Close an mesh connection

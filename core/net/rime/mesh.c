@@ -49,8 +49,6 @@
 
 #include <stddef.h> /* For offsetof */
 
-#define PACKET_TIMEOUT (CLOCK_SECOND * 10)
-
 #define DEBUG 0
 #if DEBUG
 #include <stdio.h>
@@ -100,7 +98,7 @@ data_packet_forward(struct multihop_conn *multihop,
     PRINTF("data_packet_forward: queueing data, sending rreq\n");
     c->queued_data = queuebuf_new_from_packetbuf();
     rimeaddr_copy(&c->queued_data_dest, dest);
-    route_discovery_discover(&c->route_discovery_conn, dest, PACKET_TIMEOUT);
+    route_discovery_discover(&c->route_discovery_conn, dest, c->packet_timeout);
 
     return NULL;
   } else {
@@ -162,7 +160,8 @@ static const struct route_discovery_callbacks route_discovery_callbacks =
 /*---------------------------------------------------------------------------*/
 void
 mesh_open(struct mesh_conn *c, uint16_t channels,
-	  const struct mesh_callbacks *callbacks)
+	  const struct mesh_callbacks *callbacks,
+      clock_time_t packet_timeout)
 {
   route_init();
   multihop_open(&c->multihop, channels, &data_callbacks);
@@ -170,6 +169,7 @@ mesh_open(struct mesh_conn *c, uint16_t channels,
 		       CLOCK_SECOND * 2,
 		       channels + 1,
 		       &route_discovery_callbacks);
+  c->packet_timeout = packet_timeout;
   c->cb = callbacks;
 }
 /*---------------------------------------------------------------------------*/
